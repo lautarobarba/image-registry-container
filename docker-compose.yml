@@ -5,10 +5,22 @@ services:
     container_name: registry
     image: registry:2.8
     env_file: .env
+    environment:
+      - REGISTRY_HTTP_ADDR=0.0.0.0:443
+      - REGISTRY_HTTP_TLS_CERTIFICATE=/certs/domain.crt
+      - REGISTRY_HTTP_TLS_KEY=/certs/domain.key
+        #- REGISTRY_AUTH=token
+        #- REGISTRY_AUTH_TOKEN_AUTOREDIRECT=false
+        #- REGISTRY_AUTH_TOKEN_REALM=https://gitlab.desarrollosur.com.ar/jwt/auth
+        #- REGISTRY_AUTH_TOKEN_SERVICE=container_registry
+        #- REGISTRY_AUTH_TOKEN_ISSUER=gitlab-issuer
+        #- REGISTRY_AUTH_TOKEN_ROOTCERTBUNDLE=/certs/domain.crt
     restart: always
     ports:
-      - ${APP_PORT}:5000
+      - ${APP_PORT}:443
     volumes:
       - ./registry:/var/lib/registry
+      - ./certs:/certs
+      - ./auth:/auth
     extra_hosts:
       - host.docker.internal:host-gateway
